@@ -359,17 +359,12 @@
         <a href="javascript:void(0);" onclick="logoutConfirmation()">
             <img src="Images/logout.png" alt="Logout Icon">
             <span>Logout</span>
-        </a>
-    </div>
+        </a>
+    </div>
     <div class="main-content">
         <header>
             <h1>Inventory Details</h1>
         </header>
-        
-        <div class="top-actions">
-            <input type="text" id="searchBox" placeholder="Search inventory..." oninput="searchSupplier()">
-            <button id="addSupplierButton" onclick="showAddSupplierForm()">Add Supplier</button>
-        </div>
         
         <form id="editForm">
             <label for="editSupplierID">Supplier ID</label>
@@ -386,7 +381,6 @@
                 <button type="submit" class="button-save">Save Changes</button>
                 <button type="button" class="button-cancel" onclick="cancelEdit()">Cancel</button>
             </div>
-            
         </form>
         
         <form id="addSupplierForm">
@@ -405,6 +399,11 @@
                 <button type="button" class="button-cancel" onclick="hideAddSupplierForm()">Cancel</button>
              </div>
         </form>
+        
+        <div class="top-actions">
+            <input type="text" id="searchBox" placeholder="Search inventory..." oninput="searchSupplier()">
+            <button id="addSupplierButton" onclick="showAddSupplierForm()">Add Supplier</button>
+        </div>
         
         <table id="supplierTable">
             
