@@ -349,6 +349,16 @@
         hamburgerIcon.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
         });
+        
+        function logoutConfirmation(){
+            const userChoice = confirm("Are you sure you want to log out?");
+            if (userChoice){
+                window.location.href="logout.html";
+            }
+            else {
+                window.location.href="dashboard.html";
+            }
+        }
     </script>
 </body>
 </html>
