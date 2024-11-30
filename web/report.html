@@ -1,0 +1,419 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Camera Sales</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        #hamburger-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar.collapsed #hamburger-icon {
+            width: 36px; 
+            height: 36px; 
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        .sidebar.collapsed img {
+            margin: 0 auto;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s, padding-left 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        .sidebar.collapsed a {
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .sidebar.collapsed a span {
+            display: none;
+        }
+        
+        .hamburger-container {
+            display: flex;
+            align-items: center; 
+            gap: 10px; 
+            width: 100%;
+        }
+
+        .hamburger-container span {
+            display: inline-block;
+            font-size: 25px;
+            color: white;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .hamburger-container span {
+            display: none;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e6e6e6;
+            width: calc(100% - 250px);
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        table {
+            width: 80%;
+            margin: 30px 0;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        canvas {
+            max-width: 80%;
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 20px;
+            background-color: #333;
+            color: #ccc;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .controls button {
+            background-color: #333;
+            color: white;
+            border: 2px solid #444;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .controls button:hover {
+            background-color: #444;
+            border-color: #555;
+            transform: scale(1.05);
+        }
+
+        .controls button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="hamburger-container">
+            <img src="Images/hamburger.png" alt="Menu" id="hamburger-icon">
+        </div>
+        <a href="homepage.html">
+            <img src="Images/homepage.png" alt="Homepage Icon">
+            <span>Homepage</span>
+        </a>
+        <a href="dashboard.html">
+            <img src="Images/dashboard.png" alt="Dashboard Icon">
+            <span>Dashboard</span>
+        </a>
+        <a href="inventory.html">
+            <img src="Images/inventory.png" alt="Inventory Icon">
+            <span>Inventory</span>
+        </a>
+        <a href="staff.html">
+            <img src="Images/staff.png" alt="Staff Icon">
+            <span>Staff</span>
+        </a>
+        <a href="supplier.html">
+            <img src="Images/supplier.png" alt="Supplier Icon">
+            <span>Supplier</span>
+        </a>
+        <a href="invoices.html">
+            <img src="Images/invoices.png" alt="Invoices Icon">
+            <span>Invoices</span>
+        </a>
+        <a href="report.html">
+            <img src="Images/report.png" alt="Reports Icon">
+            <span>Reports</span>
+        </a>
+        <a href="settings.html">
+            <img src="Images/setting.png" alt="Settings Icon">
+            <span>Settings</span>
+        </a>
+        <a href="javascript:void(0);" onclick="logoutConfirmation()">
+            <img src="Images/logout.png" alt="Logout Icon">
+            <span>Logout</span>
+        </a>
+    </div>
+    <style>
+        header {
+            margin-bottom: 20px;
+        }
+    </style>
+    <div class="main-content">
+        <header>
+            <h1>Sales Report</h1>
+        </header>
+
+        <div class="controls">
+            <button onclick="setReportType('yearly')">Monthly Report</button>
+            <button onclick="setReportType('monthly')">Daily Report</button>
+            
+            <div id="year-controls">
+                <label for="year">Select Year:</label>
+                <select id="year" onchange="updateReport()">
+                    <option value="2024" selected>2024</option>
+                    <option value="2023">2023</option>
+                </select>
+            </div>
+
+            <div id="month-controls" style="display: none;">
+                <label for="month">Select Month:</label>
+                <select id="month" onchange="updateReport()">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                </select>
+            </div>
+        </div>
+
+        <h2 id="report-title">Yearly Sales Data</h2>
+        <table id="sales-table" class="report-table">
+            <thead>
+                <tr>
+                    <th id="table-header-first">Month</th>
+                    <th id="table-header-second">Cameras Sold</th>
+                    <th>Total Revenue (USD)</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <canvas id="salesChart"></canvas>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+              let reportType = 'yearly'; // Default report type
+    const salesData = {
+        2024: {
+            camerasSold: [50, 45, 60, 40, 70, 55, 65, 80, 60, 85, 90, 100],
+            revenue: [25000, 22500, 30000, 20000, 35000, 27500, 32500, 40000, 30000, 42500, 45000, 50000],
+            dailySales: Array.from({ length: 12 }, () => 
+                Array.from({ length: 31 }, () => Math.floor(Math.random() * 20)))
+        },
+        2023: {
+            camerasSold: [40, 35, 50, 30, 60, 45, 55, 70, 50, 75, 80, 90],
+            revenue: [20000, 17500, 25000, 15000, 30000, 22500, 27500, 35000, 25000, 37500, 40000, 45000],
+            dailySales: Array.from({ length: 12 }, () => 
+                Array.from({ length: 31 }, () => Math.floor(Math.random() * 15)))
+        }
+    };
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let salesChart;
+
+    function setReportType(type) {
+        reportType = type;
+        if (type === 'yearly') {
+            document.getElementById('year-controls').style.display = 'block';
+            document.getElementById('month-controls').style.display = 'none';
+            document.getElementById('report-title').innerText = 'Monthly Sales Data';
+        } else {
+            document.getElementById('year-controls').style.display = 'block';
+            document.getElementById('month-controls').style.display = 'block';
+            document.getElementById('report-title').innerText = 'Daily Sales Data';
+        }
+        updateReport();
+    }
+
+    function updateTable(year, month = null) {
+        const tableBody = document.querySelector('#sales-table tbody');
+        tableBody.innerHTML = '';
+        const data = salesData[year];
+
+        if (reportType === 'yearly') {
+            document.getElementById('table-header-first').innerText = 'Month';
+            document.getElementById('table-header-second').innerText = 'Cameras Sold';
+            data.camerasSold.forEach((sold, index) => {
+                const revenue = data.revenue[index];
+                const monthName = new Date(2024, index).toLocaleString('default', { month: 'long' });
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${monthName}</td>
+                        <td>${sold}</td>
+                        <td>${revenue.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+        } else if (month !== null) {
+            document.getElementById('table-header-first').innerText = 'Day';
+            document.getElementById('table-header-second').innerText = 'Cameras Sold';
+            const daysInMonth = new Date(year, parseInt(month) + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const sold = data.dailySales[month][day - 1];
+                const revenue = sold * 500; // Assume each camera sells for $500
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${day}</td>
+                        <td>${sold}</td>
+                        <td>${revenue.toLocaleString()}</td>
+                    </tr>
+                `;
+            }
+        }
+    }
+
+    function updateChart(year, month = null) {
+        const data = salesData[year];
+        if (salesChart) {
+            salesChart.destroy();
+        }
+
+        const chartData = reportType === 'yearly'
+            ? data.camerasSold
+            : data.dailySales[month];
+        const chartLabels = reportType === 'yearly'
+            ? [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ]
+            : Array.from({ length: chartData.length }, (_, i) => i + 1);
+
+        salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Cameras Sold',
+                        data: chartData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+    }
+
+    function updateReport() {
+        const selectedYear = document.getElementById('year').value;
+        const selectedMonth = document.getElementById('month').value;
+        if (reportType === 'yearly') {
+            updateTable(selectedYear);
+            updateChart(selectedYear);
+        } else {
+            updateTable(selectedYear, selectedMonth);
+            updateChart(selectedYear, selectedMonth);
+        }
+    }
+
+    function logoutConfirmation() {
+        const userChoice = confirm("Are you sure you want to log out?");
+        if (userChoice) {
+            window.location.href = "logout.html";
+        }
+    }
+
+    setReportType('yearly');
+        </script>
+
+        <footer>
+            &copy; 2024 Camera Rental System. All Rights Reserved.
+        </footer>
+    </div>
+</body>
+</html>
